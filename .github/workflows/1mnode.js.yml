@@ -7,8 +7,8 @@ on:
     branches: [ second-edition ]
 
 jobs:
-  build:
-
+  build_test:
+    name: testing final 
     runs-on: ubuntu-latest
 
     strategy:
