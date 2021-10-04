@@ -3,9 +3,8 @@
 name: CI-CD
 
 # Controls when the action will run. 
-on:
-    push:
-    pull_request_target:
+on: pull_request_target
+
 jobs:
   # This workflow contains multiple jobs
   build_test:
