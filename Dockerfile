@@ -1,17 +1,62 @@
-FROM node:16-alpine
+FROM node
 
-# add bash
-RUN apk update
-RUN apk upgrade
-RUN apk add bash
+
+LABEL authors="Nitesh"
+
+# update dependencies and install curl
+
+RUN apt-get update && apt-get install -y \
+
+curl \
+
+&& rm -rf /var/lib/apt/lists/*
+
+# Create app directory
 
 WORKDIR /app
-# https://stackoverflow.com/a/32785014/232619
-COPY . /app
-RUN npm install
-COPY ./docker/wait-for-it.sh /usr/local
-RUN chmod +x /usr/local/wait-for-it.sh
+
+# Install app dependencies
+
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+
+# where available (npm@5+)
+
+# COPY package*.json ./ \
+
+# ./source ./
+
+
+
+# This will copy everything from the source path 
+
+# --more of a convenience when testing locally.
+
+COPY . .
+
+# update each dependency in package.json to the latest version
+
+RUN npm install -g npm-check-updates \
+
+ncu -u \
+
+npm install \
+
+npm install express \
+
+npm install babel-cli \
+
+npm install babel-preset \
+
+npm install babel-preset-env
+
+# If you are building your code for production
+
+RUN npm ci --only=production
+
+# Bundle app source
+
+COPY . /main
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD [ "babel-node", "main.js" ]
