@@ -32,10 +32,9 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
             sudo gedit /etc/sysctl.conf
-
     steps:
     - name: SSH and deploy node app
-      uses: administration/ssh-action@master
+      uses: appleboy/ssh-action@master
       with:
         host: 52.152.147.241
         username: administration
