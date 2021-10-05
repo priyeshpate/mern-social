@@ -11,7 +11,7 @@ on:
   push:
     branches: [ second-edition ]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags: [ latest ]
   pull_request:
     branches: [ second-edition ]
 
