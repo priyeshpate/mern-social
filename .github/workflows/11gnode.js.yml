@@ -1,0 +1,50 @@
+name: Node Github CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install and test
+      run: |
+        npm install
+        npm test
+      
+      env:
+        CI: true
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+            sudo gedit /etc/sysctl.conf
+
+    steps:
+    - name: SSH and deploy node app
+      uses: administration/ssh-action@master
+      with:
+        host: 52.152.147.241
+        username: administration
+        key: Pass@123456789
+        port: 22
+        script: |
+          cd ~/node-github-demo
+          git pull origin master
+          npm install --production
+          pm2 restart node-app
+          fs.inotify.max_user_watches=524288
+          sudo sysctl -p
