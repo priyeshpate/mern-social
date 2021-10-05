@@ -28,6 +28,9 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build 
-    - run: npm@5 install
+    - run: npm install
     - run: npm test
     - run : npm run development
+    - RUN npm install --prefix assets && \  
+npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+
