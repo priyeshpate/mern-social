@@ -31,5 +31,5 @@ jobs:
     - run: npm install
     - run: npm test
     - run : npm run development
-    - RUN npm install --prefix assets && \  
-npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+            - RUN npm install --prefix assets && \  
+            npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
