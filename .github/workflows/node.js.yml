@@ -24,18 +24,20 @@ jobs:
       run: |
         npm install
         npm test
+      
       env:
         CI: true
 
   deploy:
     needs: [test]
     runs-on: ubuntu-latest
+            sudo gedit /etc/sysctl.conf
 
     steps:
     - name: SSH and deploy node app
       uses: administration/ssh-action@master
       with:
-        host: 13.82.62.223
+        host: 52.152.147.241
         username: administration
         key: Pass@123456789
         port: 22
@@ -44,3 +46,5 @@ jobs:
           git pull origin master
           npm install --production
           pm2 restart node-app
+          fs.inotify.max_user_watches=524288
+          sudo sysctl -p
