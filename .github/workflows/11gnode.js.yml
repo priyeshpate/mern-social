@@ -1,18 +1,20 @@
-name: Node Github CI
+
+name: Node.js CI
 
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  build:
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -20,31 +22,18 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install and test
-      run: |
-        npm install
-        npm test
-      
-      env:
-        CI: true
-
-  deploy:
-    needs: [test]
-    runs-on: ubuntu-latest
-            sudo gedit /etc/sysctl.conf
-
-    steps:
-    - name: SSH and deploy node app
-      uses: administration/ssh-action@master
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm run test:staging
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.2
       with:
-        host: 52.152.147.241
-        username: administration
-        key: Pass@123456789
-        port: 22
+        key: ${{secrets.AZURE_VM_SSH}}
+        host: ${{secrets.AZURE_VM_IP}}
+        username: ${{secrets.AZURE_VM_USERNAME}}
         script: |
-          cd ~/node-github-demo
-          git pull origin master
-          npm install --production
-          pm2 restart node-app
-          fs.inotify.max_user_watches=524288
-          sudo sysctl -p
+          pm2 delete all
+          cd /var/app/tdd-nodejs
+          git pull
+          npm install
+          pm2 start npm -- start
